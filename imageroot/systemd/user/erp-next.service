@@ -10,8 +10,8 @@
 
 [Unit]
 Description=Podman erp-next.service
-Requires=mariadb-app.service kickstart-app.service
-Before=mariadb-app.service kickstart-app.service
+Requires=erp-next-backend.service erp-next-configurator.service erp-next-create-site.service erp-next-frontend.service erp-next-mariadb.service erp-next-queue-long.service  erp-next-queue-short.service  erp-next-redis-queue.service  erp-next-scheduler.service  erp-next-websocket.service
+Before=erp-next-backend.service erp-next-configurator.service erp-next-create-site.service erp-next-frontend.service erp-next-mariadb.service erp-next-queue-long.service  erp-next-queue-short.service  erp-next-redis-queue.service  erp-next-scheduler.service  erp-next-websocket.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
