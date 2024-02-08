@@ -32,12 +32,12 @@ To start a new module from it:
 
 Instantiate the module with:
 
-    add-module ghcr.io/nethserver/kickstart:latest 1
+    add-module ghcr.io/kemboi22/erpnext:latest 1
 
 The output of the command will return the instance name.
 Output example:
 
-    {"module_id": "kickstart1", "image_name": "kickstart", "image_url": "ghcr.io/nethserver/kickstart:latest"}
+    {"module_id": "erpnext1", "image_name": "erpnext", "image_url": "ghcr.io/kemboi22/erpnext:latest"}
 
 ## Configure
 
@@ -52,7 +52,7 @@ Launch `configure-module`, by setting the following parameters:
 Example:
 
 ```
-api-cli run configure-module --agent module/kickstart1 --data - <<EOF
+api-cli run configure-module --agent module/erpnext1 --data - <<EOF
 {
   "host": "kickstart.domain.com",
   "http2https": true,
@@ -69,14 +69,14 @@ The above command will:
 You can retrieve the configuration with
 
 ```
-api-cli run get-configuration --agent module/kickstart1
+api-cli run get-configuration --agent module/erpnext1
 ```
 
 ## Uninstall
 
 To uninstall the instance:
 
-    remove-module --no-preserve kickstart1
+    remove-module --no-preserve erpnext1
 
 ## Smarthost setting discovery
 
@@ -92,7 +92,7 @@ Furthermore if smarthost setup is changed when kickstart is already
 running, the event handler `events/smarthost-changed/10reload_services`
 restarts the main module service.
 
-See also the `systemd/user/kickstart.service` file.
+See also the `systemd/user/erp-next.service` file.
 
 This setting discovery is just an example to understand how the module is
 expected to work: it can be rewritten or discarded completely.
@@ -104,20 +104,20 @@ some CLI are needed to debug
 - The module runs under an agent that initiate a lot of environment variables (in /home/kickstart1/.config/state), it could be nice to verify them
 on the root terminal
 
-    `runagent -m kickstart1 env`
+    `runagent -m erpnext1 env`
 
 - you can become runagent for testing scripts and initiate all environment variables
   
-    `runagent -m kickstart1`
+    `runagent -m erpnext1`
 
  the path become : 
 ```
     echo $PATH
-    /home/kickstart1/.config/bin:/usr/local/agent/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/
+    /home/erpnext1/.config/bin:/usr/local/agent/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/
 ```
 
 - if you want to debug a container or see environment inside
- `runagent -m kickstart1`
+ `runagent -m erpnext1`
  ```
 podman ps
 CONTAINER ID  IMAGE                                      COMMAND               CREATED        STATUS        PORTS                    NAMES
@@ -128,7 +128,7 @@ d8df02bf6f4a  docker.io/library/mariadb:10.11.5          --character-set-s...  9
 
 you can see what environment variable is inside the container
 ```
-podman exec  kickstart-app env
+podman exec  erp-next-app env
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 TERM=xterm
 PKG_RELEASE=1

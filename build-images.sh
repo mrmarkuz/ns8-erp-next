@@ -11,7 +11,7 @@ set -e
 # Prepare variables for later use
 images=()
 # The image will be pushed to GitHub container registry
-repobase="${REPOBASE:-ghcr.io/kemboielvis}"
+repobase="${REPOBASE:-ghcr.io/kemboi22}"
 # Configure the image name
 reponame="erpnext"
 
