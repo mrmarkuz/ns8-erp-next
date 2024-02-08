@@ -1,0 +1,36 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman erp-next-configurator.service
+Requires=erp-next.service
+After=erp-next.service erp-next-backend.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/configurator.pid %t/configurator.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/configurator.pid \
+    --cidfile %t/configurator.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name configurator \
+    -v sites:/home/frappe/frappe-bench/sites \
+    -v logs:/home/frappe/frappe-bench/logs \
+    -e DB_HOST=db \
+    -e DB_PORT=3306 \
+    -e REDIS_CACHE=redis-cache:6379 \
+    -e REDIS_QUEUE=redis-queue:6379 \
+    -e SOCKETIO_PORT=9000 \
+     ${ERPNEXT_IMAGE} \
+    bash -c 'ls -1 apps > sites/apps.txt; bench set-config -g db_host $$DB_HOST; bench set-config -gp db_port $$DB_PORT; bench set-config -g redis_cache "redis://$$REDIS_CACHE"; bench set-config -g redis_queue "redis://$$REDIS_QUEUE"; bench set-config -g redis_socketio "redis://$$REDIS_QUEUE"; bench set-config -gp socketio_port $$SOCKETIO_PORT'
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/configurator.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP configurator
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/configurator.ctr-id
+PIDFile=%t/configurator.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

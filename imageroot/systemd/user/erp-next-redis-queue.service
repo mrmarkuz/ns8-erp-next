@@ -1,0 +1,26 @@
+# redis-queue.service
+
+[Unit]
+Description=Podman erp-next-redis-queue.service
+Requires=erp-next.service
+After=erp-next.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/redis-queue.pid %t/redis-queue.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/redis-queue.pid \
+    --cidfile %t/redis-queue.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name redis-queue \
+    -v redis-queue-data:/data \
+    ${REDIS_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/redis-queue.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP redis-queue
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/redis-queue.ctr-id
+PIDFile=%t/redis-queue.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

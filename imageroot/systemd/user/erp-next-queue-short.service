@@ -1,0 +1,28 @@
+# queue-short.service
+
+[Unit]
+Description=Podman erp-next-queue-short.service
+Requires=erp-next.service
+After=erp-next.service erp-next-backend.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/queue-short.pid %t/queue-short.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/queue-short.pid \
+    --cidfile %t/queue-short.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name queue-short \
+    -v sites:/home/frappe/frappe-bench/sites \
+    -v logs:/home/frappe/frappe-bench/logs \
+    ${ERPNEXT_IMAGE} \
+    bench worker --queue short,default
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/queue-short.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP queue-short
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/queue-short.ctr-id
+PIDFile=%t/queue-short.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,28 @@
+# websocket.service
+
+[Unit]
+Description=Podman websocket.service
+Requires=erp-next.service
+After=erp-next.service erp-next-frontend.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/websocket.pid %t/websocket.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/websocket.pid \
+    --cidfile %t/websocket.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name websocket \
+    -v sites:/home/frappe/frappe-bench/sites \
+    -v logs:/home/frappe/frappe-bench/logs \
+    ${ERPNEXT_IMAGE} \
+    node /home/frappe/frappe-bench/apps/frappe/socketio.js
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/websocket.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP websocket
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/websocket.ctr-id
+PIDFile=%t/websocket.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

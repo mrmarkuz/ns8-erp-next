@@ -1,0 +1,28 @@
+# scheduler.service
+
+[Unit]
+Description=Podman erp-next-scheduler.service
+Requires=erp-next.service
+After=erp-next.service erp-next-frontend.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/scheduler.pid %t/scheduler.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/scheduler.pid \
+    --cidfile %t/scheduler.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name scheduler \
+    -v sites:/home/frappe/frappe-bench/sites \
+    -v logs:/home/frappe/frappe-bench/logs \
+    ${ERPNEXT_IMAGE} \
+    bench schedule
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/scheduler.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP scheduler
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/scheduler.ctr-id
+PIDFile=%t/scheduler.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

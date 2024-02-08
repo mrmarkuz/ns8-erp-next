@@ -1,0 +1,37 @@
+# frontend.service
+
+[Unit]
+Description=Podman erp-next-frontend.service
+Requires=erp-next.service
+After=erp-next.service erp-next-backend.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/frontend.pid %t/frontend.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/frontend.pid \
+    --cidfile %t/frontend.ctr-id --cgroups=no-conmon \
+    --pod erp-next --replace -d --name frontend \
+    --depends-on websocket \
+    -v sites:/home/frappe/frappe-bench/sites \
+    -v logs:/home/frappe/frappe-bench/logs \
+    -e BACKEND=backend:8000 \
+    -e FRAPPE_SITE_NAME_HEADER=frontend \
+    -e SOCKETIO=websocket:9000 \
+    -e UPSTREAM_REAL_IP_ADDRESS=127.0.0.1 \
+    -e UPSTREAM_REAL_IP_HEADER=X-Forwarded-For \
+    -e UPSTREAM_REAL_IP_RECURSIVE=off \
+    -e PROXY_READ_TIMEOUT=120 \
+    -e CLIENT_MAX_BODY_SIZE=50m \
+    ${ERPNEXT_IMAGE} \
+    nginx-entrypoint.sh
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/frontend.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP frontend
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/frontend.ctr-id
+PIDFile=%t/frontend.pid
+Type=forking
+
+[Install]
+WantedBy=default.target
