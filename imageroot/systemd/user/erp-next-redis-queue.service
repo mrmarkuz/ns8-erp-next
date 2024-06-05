@@ -4,7 +4,7 @@
 Description=Podman erp-next-redis-queue.service
 Requires=erp-next.service
 After=erp-next.service
-
+Before=erp-next.mariadb.service
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=always

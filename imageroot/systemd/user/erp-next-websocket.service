@@ -3,7 +3,7 @@
 [Unit]
 Description=Podman websocket.service
 Requires=erp-next.service
-After=erp-next.service erp-next-frontend.service
+After=erp-next.service erp-next-mariadb.service erp-next-backend.service erp-next-configurator.service erp-next-create-site.service erp-next-queue-long.service erp-next-queue-short.service erp-next-scheduler.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
