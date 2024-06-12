@@ -14,7 +14,7 @@ images=()
 repobase="${REPOBASE:-ghcr.io/geniusdynamics}"
 # Configure the image name
 reponame="erpnext"
-app_version="10.0.15"
+app_version="v15.27.4"
 # Create a new empty container image
 container=$(buildah from scratch)
 
