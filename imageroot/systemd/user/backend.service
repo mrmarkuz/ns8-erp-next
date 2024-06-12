@@ -4,9 +4,9 @@
 #
 
 [Unit]
-Description=Podman erp-next-backend.service
+Description=Podman backend.service
 Requires=erp-next.service
-After=erp-next.service db.service redis-queue.service
+After=erp-next.service redis-queue.service db.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n

@@ -1,47 +1,20 @@
-# ns8-kickstart
+# ns8-erpnext
 
-This is a template module for [NethServer 8](https://github.com/NethServer/ns8-core).
-To start a new module from it:
-
-1. Click on [Use this template](https://github.com/NethServer/ns8-kickstart/generate).
-   Name your repo with `ns8-` prefix (e.g. `ns8-mymodule`). 
-   Do not end your module name with a number, like ~~`ns8-baaad2`~~!
-
-1. Clone the repository, enter the cloned directory and
-   [configure your GIT identity](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup#_your_identity)
-
-1. Rename some references inside the repo:
-   ```
-   modulename=$(basename $(pwd) | sed 's/^ns8-//')
-   git mv imageroot/systemd/user/kickstart.service imageroot/systemd/user/${modulename}.service
-   git mv tests/kickstart.robot tests/${modulename}.robot
-   sed -i "s/kickstart/${modulename}/g" $(find .github/ * -type f)
-   git commit -a -m "Repository initialization"
-   ```
-
-1. Edit this `README.md` file, by replacing this section with your module
-   description
-
-1. Adjust `.github/workflows` to your needs. `clean-registry.yml` might
-   need the proper list of image names to work correctly. Unused workflows
-   can be disabled from the GitHub Actions interface.
-
-1. Commit and push your local changes
 
 ## Install
 
 Instantiate the module with:
 
-    add-module ghcr.io/kemboi22/erpnext:latest 1
+    add-module ghcr.io/geniusdynamics/erpnext:latest 1
 
 The output of the command will return the instance name.
 Output example:
 
-    {"module_id": "erpnext1", "image_name": "erpnext", "image_url": "ghcr.io/kemboi22/erpnext:latest"}
+    {"module_id": "erpnext1", "image_name": "erpnext", "image_url": "ghcr.io/geniusdynamics/erpnext:latest"}
 
 ## Configure
 
-Let's assume that the mattermost instance is named `kickstart1`.
+Let's assume that the mattermost instance is named `erpnext1`.
 
 Launch `configure-module`, by setting the following parameters:
 - `host`: a fully qualified domain name for the application
@@ -54,7 +27,7 @@ Example:
 ```
 api-cli run configure-module --agent module/erpnext1 --data - <<EOF
 {
-  "host": "kickstart.domain.com",
+  "host": "erpnext.domain.com",
   "http2https": true,
   "lets_encrypt": false
 }
@@ -62,7 +35,7 @@ EOF
 ```
 
 The above command will:
-- start and configure the kickstart instance
+- start and configure the erpnext instance
 - configure a virtual host for trafik to access the instance
 
 ## Get the configuration
@@ -85,10 +58,10 @@ Some configuration settings, like the smarthost setup, are not part of the
 Redis keys.  To ensure the module is always up-to-date with the
 centralized [smarthost
 setup](https://nethserver.github.io/ns8-core/core/smarthost/) every time
-kickstart starts, the command `bin/discover-smarthost` runs and refreshes
+erpnext starts, the command `bin/discover-smarthost` runs and refreshes
 the `state/smarthost.env` file with fresh values from Redis.
 
-Furthermore if smarthost setup is changed when kickstart is already
+Furthermore if smarthost setup is changed when erpnext is already
 running, the event handler `events/smarthost-changed/10reload_services`
 restarts the main module service.
 
@@ -101,7 +74,7 @@ expected to work: it can be rewritten or discarded completely.
 
 some CLI are needed to debug
 
-- The module runs under an agent that initiate a lot of environment variables (in /home/kickstart1/.config/state), it could be nice to verify them
+- The module runs under an agent that initiate a lot of environment variables (in /home/erpnext1/.config/state), it could be nice to verify them
 on the root terminal
 
     `runagent -m erpnext1 env`
@@ -123,7 +96,7 @@ podman ps
 CONTAINER ID  IMAGE                                      COMMAND               CREATED        STATUS        PORTS                    NAMES
 d292c6ff28e9  localhost/podman-pause:4.6.1-1702418000                          9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  80b8de25945f-infra
 d8df02bf6f4a  docker.io/library/mariadb:10.11.5          --character-set-s...  9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  mariadb-app
-9e58e5bd676f  docker.io/library/nginx:stable-alpine3.17  nginx -g daemon o...  9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  kickstart-app
+9e58e5bd676f  docker.io/library/nginx:stable-alpine3.17  nginx -g daemon o...  9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  erpnext-app
 ```
 
 you can see what environment variable is inside the container
@@ -133,14 +106,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 TERM=xterm
 PKG_RELEASE=1
 MARIADB_DB_HOST=127.0.0.1
-MARIADB_DB_NAME=kickstart
+MARIADB_DB_NAME=erpnext
 MARIADB_IMAGE=docker.io/mariadb:10.11.5
 MARIADB_DB_TYPE=mysql
 container=podman
 NGINX_VERSION=1.24.0
 NJS_VERSION=0.7.12
-MARIADB_DB_USER=kickstart
-MARIADB_DB_PASSWORD=kickstart
+MARIADB_DB_USER=erpnext
+MARIADB_DB_PASSWORD=erpnext
 MARIADB_DB_PORT=3306
 HOME=/root
 ```
@@ -148,7 +121,7 @@ HOME=/root
 you can run a shell inside the container
 
 ```
-podman exec -ti   kickstart-app sh
+podman exec -ti   erpnext-app sh
 / # 
 ```
 ## Testing
@@ -156,7 +129,7 @@ podman exec -ti   kickstart-app sh
 Test the module using the `test-module.sh` script:
 
 
-    ./test-module.sh <NODE_ADDR> ghcr.io/nethserver/kickstart:latest
+    ./test-module.sh <NODE_ADDR> ghcr.io/nethserver/erpnext:latest
 
 The tests are made using [Robot Framework](https://robotframework.org/)
 
