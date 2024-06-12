@@ -7,4 +7,5 @@
 
 set -e
 
+
 systemctl --user try-reload-or-restart erp-next.service

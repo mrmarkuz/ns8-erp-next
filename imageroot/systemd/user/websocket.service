@@ -1,4 +1,4 @@
-# websocket.service
+# erp-next websocket.service
 
 [Unit]
 Description=Podman websocket.service
