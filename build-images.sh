@@ -11,10 +11,10 @@ set -e
 # Prepare variables for later use
 images=()
 # The image will be pushed to GitHub container registry
-repobase="${REPOBASE:-ghcr.io/geniusdynamics}"
+repobase="${REPOBASE:-ghcr.io/mrmarkuz}"
 # Configure the image name
 reponame="erpnext"
-app_version="v15.27.4"
+app_version="v15.27.6"
 # Create a new empty container image
 container=$(buildah from scratch)
 
