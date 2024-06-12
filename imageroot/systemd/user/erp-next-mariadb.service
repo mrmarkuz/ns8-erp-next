@@ -21,9 +21,9 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/mariadb-app.pid \
     --env-file=%S/state/environment \
     --volume mysql-data:/var/lib/mysql/:Z \
     --env MARIADB_ROOT_PASSWORD=Nethesis,1234 \
-    --env MARIADB_DATABASE=erp-next \
-    --env MARIADB_USER=erp-next \
-    --env MARIADB_PASSWORD=erp-next \
+    --env MARIADB_DATABASE=erpnext \
+    --env MARIADB_USER=erpnext \
+    --env MARIADB_PASSWORD=erpnext \
     --env MARIADB_AUTO_UPGRADE=1 \
     ${MARIADB_IMAGE} \
     --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake
