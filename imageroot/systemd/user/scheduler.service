@@ -1,7 +1,7 @@
 # scheduler.service
 
 [Unit]
-Description=Podman erp-next-scheduler.service
+Description=Podman scheduler.service
 Requires=erp-next.service
 After=erp-next.service redis-queue.service db.service backend.service configurator.service create-site.service frontend.service queue-long.service queue-short.service
 

@@ -1,7 +1,7 @@
 # queue-short.service
 
 [Unit]
-Description=Podman erp-next-queue-short.service
+Description=Podman queue-short.service
 Requires=erp-next.service
 After=erp-next.service redis-queue.service db.service backend.service configurator.service create-site.service frontend.service queue-long.service
 
